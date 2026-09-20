@@ -37,18 +37,19 @@ public class Cola {
     }
 
     private boolean estaLlena() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'estaLlena'");
+        return this.tamaño >= this.CAPACIDAD_MAXIMA;
     }
 
-    private void insertarAlFinal(Cliente nuevoCliente) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'insertarAlFinal'");
+    private void insertarAlFinal(Cliente clienteNormal) {
+        this.clientes[this.tamaño] = clienteNormal;
     }
 
-    private void insertarAlFrente(Cliente nuevoCliente) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'insertarAlFrente'");
+    private void insertarAlFrente(Cliente clientePrioritario) {
+        for (int i = this.tamaño; i > 0; i--) {
+            this.clientes[i] = this.clientes[i - 1];
+        }
+        
+        this.clientes[0] = clientePrioritario;
     }
 
     public boolean hayClientes() {
