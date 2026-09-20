@@ -21,9 +21,34 @@ public class Cola {
         }
     }
 
-    public void añadirCliente(Cliente cliente) {
-        clientes[tamaño] = cliente;
-        tamaño = tamaño + 1;
+    public boolean encolar(Cliente nuevoCliente) {
+        if (this.estaLlena() || nuevoCliente == null) {
+            return false;
+        }
+
+        if (nuevoCliente.tienePrioridad()) {
+            this.insertarAlFrente(nuevoCliente);
+        } else {
+            this.insertarAlFinal(nuevoCliente);
+        }
+        
+        this.tamaño++;
+        return true;
+    }
+
+    private boolean estaLlena() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'estaLlena'");
+    }
+
+    private void insertarAlFinal(Cliente nuevoCliente) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'insertarAlFinal'");
+    }
+
+    private void insertarAlFrente(Cliente nuevoCliente) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'insertarAlFrente'");
     }
 
     public boolean hayClientes() {

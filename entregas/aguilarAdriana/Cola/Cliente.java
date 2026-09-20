@@ -3,9 +3,11 @@ package entregas.aguilarAdriana.Cola;
 public class Cliente {
 
     private int items;
+    private boolean tienePrioridad = true;
     private Console console;
 
-    public Cliente() {
+    public Cliente(boolean tienePrioridad) {
+        this.tienePrioridad = tienePrioridad;
         items = this.generarItems();
         console = new Console();
     }
@@ -16,6 +18,10 @@ public class Cliente {
         return (int) (Math.random() * (MAXIMO_ITEMS - MINIMO_ITEMS) + MINIMO_ITEMS);
     }
 
+    public boolean tienePrioridad () {
+        return tienePrioridad;
+    }
+    
     public int obtenerItems() {
         return items;
     }
