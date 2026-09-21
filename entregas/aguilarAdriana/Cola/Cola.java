@@ -85,4 +85,14 @@ public class Cola {
         return clientes[0];
     }
 
+    public boolean estaVacia() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'estaVacia'");
+    }
+
+    public void desencolar() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'desencolar'");
+    }
+
 }
