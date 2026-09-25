@@ -1,32 +1,54 @@
 package entregas.aguilarAdriana.Cola;
 
 public class Cliente {
-
+    private int id;
     private int items;
-    private boolean tienePrioridad = true;
+    private boolean tienePrioridad;
+    private Cliente siguiente; 
     private Console console;
 
-    public Cliente(boolean tienePrioridad) {
+    public Cliente(int id, boolean tienePrioridad) {
+        this.id = id;
         this.tienePrioridad = tienePrioridad;
-        items = this.generarItems();
-        console = new Console();
+        this.items = this.generarItems();
+        this.siguiente = null;
+        this.console = new Console();
     }
 
     private int generarItems() {
-        final int MAXIMO_ITEMS = 15;
-        final int MINIMO_ITEMS = 5;
-        return (int) (Math.random() * (MAXIMO_ITEMS - MINIMO_ITEMS) + MINIMO_ITEMS);
+        return (int) (Math.random() * (15 - 5) + 5);
     }
 
-    public boolean tienePrioridad () {
+   
+    public void formarse(Cliente nuevo) {
+        if (this.siguiente == null) {
+            this.siguiente = nuevo;
+        } else if (nuevo.tienePrioridad() && !this.siguiente.tienePrioridad()) {
+            nuevo.enlazarSiguiente(this.siguiente);
+            this.siguiente = nuevo;
+        } else {
+            this.siguiente.formarse(nuevo);
+        }
+    }
+
+    public void enlazarSiguiente(Cliente cliente) {
+        this.siguiente = cliente;
+    }
+
+    public Cliente obtenerSiguiente() {
+        return this.siguiente;
+    }
+
+    public boolean tienePrioridad() {
         return tienePrioridad;
     }
-    
+
     public int obtenerItems() {
         return items;
     }
 
     public void mostrar() {
-        console.write("[" + items + "]_O/");
+        String indicadorPrioridad = tienePrioridad ? "P" : "";
+        console.write("[C" + id + "-" + items + indicadorPrioridad + "]_O/ ");
     }
 }
