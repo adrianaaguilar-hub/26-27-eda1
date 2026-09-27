@@ -67,6 +67,12 @@ public class CentroComercial {
         }
     }
 
+    private void procesarAtencionCajas() {
+        for (int i = 0; i < cajas.length; i++) {
+            cajas[i].avanzarAtencion();
+        }
+    }
+
     private void registrarEstadoVirtual() {
         if (primerCliente == null) {
             minutosSinClientes++;

@@ -1,4 +1,8 @@
-# SupermercadoSinCola
+﻿# SupermercadoSinCola
+
+Este README reúne el código actual de las clases Java de esta carpeta. La implementación principal usa referencias enlazadas en Cliente. (falta implementar la funcion de array lleno = array nuevo mas grande)
+
+Trabajarlo como estructura de datos que apuntan a otras, implementar a tu codigo el que se cuele alguien
 
 ## Caja.java
 
@@ -28,10 +32,6 @@ public class Caja {
 
     public void asignar(Cliente cliente) {
         this.cliente = cliente;
-        itemsRestantes = cliente.obtenerItems();
-    }
-
-    public void avanzarAtencion() {
         if (!this.estaLibre()) {
             itemsRestantes = itemsRestantes - 1;
             if (itemsRestantes == 0) {
@@ -77,8 +77,6 @@ public class CajaExpress extends Caja {
     }
     
     @Override
-    public void mostrar() {
-        console.write("CajaE["+numero+"] ");
         console.writeln("[:]".repeat(itemsRestantes));
     }
 
@@ -111,16 +109,17 @@ package entregas.aguilarAdriana.Cola;
 
 public class CentroComercial {
 
-    private Cola cola;
+    private Cliente primerCliente;
     private Caja[] cajas;
     private Tiempo tiempo;
+    private int totalClientesHistorico; 
+    private int minutosSinClientes;
     private boolean llegaClienteEsteMinuto;
     final private double PROBABILIDAD_LLEGADA = 0.4;
     private Console console;
 
     public CentroComercial() {
         console = new Console();
-        cola = new Cola();
         cajas = new Caja[5];
         for (int i = 0; i < cajas.length; i++) {
             cajas[i] = new Caja(i + 1);
@@ -128,13 +127,16 @@ public class CentroComercial {
         cajas[0] = new CajaExpress(1);
         cajas[4] = new CajaExpress(5);
         tiempo = new Tiempo();
+        primerCliente = null;
+        totalClientesHistorico = 0;
+        minutosSinClientes = 0;
     }
 
     public void simular() {
         do {
             tiempo.avanzar();
             this.procesarLlegadaCliente();
-            cola.registrarEstado();
+            this.registrarEstadoVirtual();
             this.asignarClientesACajas();
             this.procesarAtencionCajas();
             this.mostrarEstado();
@@ -143,74 +145,80 @@ public class CentroComercial {
         this.mostrarResumen();
     }
 
-    private void mostrarResumen() {
-        int minutosSinClientes = cola.obtenerMinutosSinClientes();
-        int personasEnCola = cola.obtenerCantidadPersonasEnCola();
-        int personasAtendidas = this.obtenerPersonasAtendidas();
-        int itemsVendidos = this.obtenerItemsVendidos();
+    private void procesarLlegadaCliente() {
+        llegaClienteEsteMinuto = Math.random() <= PROBABILIDAD_LLEGADA;
+        if (llegaClienteEsteMinuto) {
+            totalClientesHistorico++;
+            boolean esPrioritario = Math.random() <= 0.2; 
+            Cliente nuevoCliente = new Cliente(totalClientesHistorico, esPrioritario);
 
-        console.writeln("Personas atendidas: " + personasAtendidas);
-        console.writeln("Personas en cola al cierre: " + personasEnCola);
-        console.writeln("Items vendidos: " + itemsVendidos);
-        console.writeln("Minutos sin clientes en cola: " + minutosSinClientes);
-    }
-
-    private int obtenerPersonasAtendidas(){
-        int totalItems=0;
-        for(int numeroCaja=0; numeroCaja<cajas.length; numeroCaja++){
-            totalItems= totalItems + cajas[numeroCaja].obtenerPersonasAtendidas();
+            if (primerCliente == null) {
+                primerCliente = nuevoCliente;
+            } else {
+                if (nuevoCliente.tienePrioridad() && !primerCliente.tienePrioridad()) {
+                    nuevoCliente.enlazarSiguiente(primerCliente);
+                    primerCliente = nuevoCliente;
+                } else {
+                    primerCliente.formarse(nuevoCliente);
+                }
+            }
         }
-        return totalItems;
     }
 
-    private int obtenerItemsVendidos(){
-        int totalItems=0;
-        for(int numeroCaja=0; numeroCaja<cajas.length; numeroCaja++){
-            totalItems = totalItems + cajas[numeroCaja].obtenerItemsVendidos();
+    private void asignarClientesACajas() {
+        for (int i = 0; i < cajas.length; i++) {
+            if (cajas[i].estaLibre() && primerCliente != null && cajas[i].puedeAtender(primerCliente)) {
+                cajas[i].asignar(primerCliente);
+                primerCliente = primerCliente.obtenerSiguiente(); 
+            }
         }
-        return totalItems;
     }
 
-    private void pausar() {
-        console.pause(1);
+    private void registrarEstadoVirtual() {
+        if (primerCliente == null) {
+            minutosSinClientes++;
+        }
     }
 
     private void mostrarEstado() {
         console.cleanScreen();
         tiempo.mostrar(llegaClienteEsteMinuto);
-        cola.mostrar();
-        this.mostrarCajas();
-    }
-
-    private void mostrarCajas(){
-        for(int numeroCaja=0; numeroCaja<cajas.length; numeroCaja++){
-            cajas[numeroCaja].mostrar();
+        
+        Cliente actual = primerCliente;
+        while (actual != null) {
+            actual.mostrar();
+            actual = actual.obtenerSiguiente();
+        }
+        console.writeln("\n");
+        
+        for (int i = 0; i < cajas.length; i++) {
+            cajas[i].mostrar();
         }
     }
 
-    private void procesarAtencionCajas() {
-        for(int numeroCaja=0; numeroCaja<cajas.length; numeroCaja++){
-            cajas[numeroCaja].avanzarAtencion();
+    private void mostrarResumen() {
+        int personasAtendidas = 0;
+        int itemsVendidos = 0;
+        for (int i = 0; i < cajas.length; i++) {
+            personasAtendidas += cajas[i].obtenerPersonasAtendidas();
+            itemsVendidos += cajas[i].obtenerItemsVendidos();
         }
+        
+        int personasEnEspera = 0;
+        Cliente actual = primerCliente;
+        while (actual != null) {
+            personasEnEspera++;
+            actual = actual.obtenerSiguiente();
+        }
+
+        console.writeln("Personas atendidas: " + personasAtendidas);
+        console.writeln("Personas sin atender al cierre: " + personasEnEspera);
+        console.writeln("Items vendidos: " + itemsVendidos);
+        console.writeln("Minutos sin clientes esperando: " + minutosSinClientes);
     }
 
-    private void asignarClientesACajas() {
-        for(int numeroCaja=0; numeroCaja<cajas.length; numeroCaja++){
-            if (cajas[numeroCaja].estaLibre() 
-                && cola.hayClientes()
-                && cajas[numeroCaja].puedeAtender(cola.primero())){
-                Cliente cliente = cola.quitarCliente();
-                cajas[numeroCaja].asignar(cliente);
-            }
-        }
-    }
-
-    private void procesarLlegadaCliente() {
-        llegaClienteEsteMinuto = Math.random() <= PROBABILIDAD_LLEGADA;
-        if (llegaClienteEsteMinuto) {
-            Cliente cliente = new Cliente();
-            cola.añadirCliente(cliente);
-        }
+    private void pausar() {
+        console.pause(1);
     }
 }
 ```
@@ -221,137 +229,56 @@ public class CentroComercial {
 package entregas.aguilarAdriana.Cola;
 
 public class Cliente {
-
+    private int id;
     private int items;
-    private boolean tienePrioridad = true;
+    private boolean tienePrioridad;
+    private Cliente siguiente; 
     private Console console;
 
-    public Cliente(boolean tienePrioridad) {
+    public Cliente(int id, boolean tienePrioridad) {
+        this.id = id;
         this.tienePrioridad = tienePrioridad;
-        items = this.generarItems();
-        console = new Console();
+        this.items = this.generarItems();
+        this.siguiente = null;
+        this.console = new Console();
     }
 
     private int generarItems() {
-        final int MAXIMO_ITEMS = 15;
-        final int MINIMO_ITEMS = 5;
-        return (int) (Math.random() * (MAXIMO_ITEMS - MINIMO_ITEMS) + MINIMO_ITEMS);
+        return (int) (Math.random() * (15 - 5) + 5);
     }
 
-    public boolean tienePrioridad () {
+   
+    public void formarse(Cliente nuevo) {
+        if (this.siguiente == null) {
+            this.siguiente = nuevo;
+        } else if (nuevo.tienePrioridad() && !this.siguiente.tienePrioridad()) {
+            nuevo.enlazarSiguiente(this.siguiente);
+            this.siguiente = nuevo;
+        } else {
+            this.siguiente.formarse(nuevo);
+        }
+    }
+
+    public void enlazarSiguiente(Cliente cliente) {
+        this.siguiente = cliente;
+    }
+
+    public Cliente obtenerSiguiente() {
+        return this.siguiente;
+    }
+
+    public boolean tienePrioridad() {
         return tienePrioridad;
     }
-    
+
     public int obtenerItems() {
         return items;
     }
 
     public void mostrar() {
-        console.write("[" + items + "]_O/");
+        String indicadorPrioridad = tienePrioridad ? "P" : "";
+        console.write("[C" + id + "-" + items + indicadorPrioridad + "]_O/ ");
     }
-}
-```
-
-## Cola.java
-
-```java
-package entregas.aguilarAdriana.Cola;
-
-public class Cola {
-
-    private Cliente[] clientes;
-    private final int CAPACIDAD_MAXIMA = 100;
-    private int minutosSinClientes;
-    private int tamaño;
-    private Console console;
-
-    public Cola() {
-        clientes = new Cliente[CAPACIDAD_MAXIMA];
-        minutosSinClientes = 0;
-        tamaño = 0;
-        console = new Console();
-    }
-
-    public void registrarEstado() {
-        if (tamaño == 0) {
-            minutosSinClientes = minutosSinClientes + 1;
-        }
-    }
-
-    public boolean encolar(Cliente nuevoCliente) {
-        if (this.estaLlena() || nuevoCliente == null) {
-            return false;
-        }
-
-        if (nuevoCliente.tienePrioridad()) {
-            this.insertarAlFrente(nuevoCliente);
-        } else {
-            this.insertarAlFinal(nuevoCliente);
-        }
-        
-        this.tamaño++;
-        return true;
-    }
-
-    private boolean estaLlena() {
-        return this.tamaño >= this.CAPACIDAD_MAXIMA;
-    }
-
-    private void insertarAlFinal(Cliente clienteNormal) {
-        this.clientes[this.tamaño] = clienteNormal;
-    }
-
-    private void insertarAlFrente(Cliente clientePrioritario) {
-        for (int i = this.tamaño; i > 0; i--) {
-            this.clientes[i] = this.clientes[i - 1];
-        }
-        
-        this.clientes[0] = clientePrioritario;
-    }
-
-    public boolean hayClientes() {
-        return tamaño > 0;
-    }
-
-    public Cliente quitarCliente() {
-        Cliente cliente = clientes[0];
-        for (int i = 0; i < tamaño - 1; i++) {
-            clientes[i] = clientes[i + 1];
-        }
-        clientes[tamaño - 1] = null;
-        tamaño = tamaño - 1;
-        return cliente;
-    }
-
-    public void mostrar() {
-        for(int i=0;i<tamaño;i++){
-            clientes[i].mostrar();
-        }
-        console.writeln();
-    }
-
-    public int obtenerMinutosSinClientes() {
-        return minutosSinClientes;
-    }
-
-    public int obtenerCantidadPersonasEnCola() {
-        return tamaño;
-    }
-
-    public Cliente primero() {
-        return clientes[0];
-    }
-
-    public boolean estaVacia() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'estaVacia'");
-    }
-
-    public void desencolar() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'desencolar'");
-    }
-
 }
 ```
 
@@ -359,6 +286,8 @@ public class Cola {
 
 ```java
 package entregas.aguilarAdriana.Cola;
+
+public class Console {
     import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.regex.Pattern;
@@ -516,9 +445,10 @@ public class Console {
     }
 
     public void cleanScreen() {
-        System.out.print("\\033[H\\033[2J");
+        System.out.print("\033[H\033[2J");
         System.out.flush();
     }
+}
 }
 ```
 
@@ -620,7 +550,7 @@ public class Tiempo {
     public void mostrar(boolean llegaClienteEsteMinuto) {
         console.write(this.horaHumana());
         console.write(" ");
-        console.writeln((llegaClienteEsteMinuto ? "" : "no") + " llegó un cliente");
+        console.writeln((llegaClienteEsteMinuto ? "" : "no") + " llegÃ³ un cliente");
     }
 
     private String horaHumana() {
@@ -641,3 +571,4 @@ public class Tiempo {
 
 }
 ```
+
