@@ -34,4 +34,4 @@ flowchart TD
     class Bucle highlight;
 ```
 
-Cada vuelta representa un minuto de la simulacion. Las cajas express solo aceptan clientes con diez articulos o menos.
+Cada vuelta representa un minuto de la simulacion. Las cajas express solo aceptan clientes con diez articulos o menos. 
