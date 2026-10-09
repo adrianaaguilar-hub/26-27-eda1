@@ -47,6 +47,16 @@ public class ArraySimulado {
         }
         System.out.println();
     }
-}
 
-    
+    private Nodo buscarNodo(int indice) {
+        Nodo actual = primero;
+        for (int i = 0; i < indice; i++) {
+            actual = actual.siguiente;
+        }
+        return actual;
+    }
+
+    private boolean indiceValido(int indice) {
+        return indice >= 0 && indice < tamano;
+    }
+}
