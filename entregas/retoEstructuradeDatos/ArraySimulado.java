@@ -34,7 +34,7 @@ public class ArraySimulado {
             Nodo nodo = buscarNodo(indice);
             return nodo.valor;
         } else {
-            System.out.println("Indice fuera de rango: " + indice);
+            System.out.println("Valores fuera de rango: " + indice);
             return null;
         }
     }
