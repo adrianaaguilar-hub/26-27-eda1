@@ -1,11 +1,11 @@
 package entregas.retoEstructuradeDatos;
 
 public class Nodo {
-    int dato;
+    String valor;
     Nodo siguiente;
 
-    public Nodo(int dato) {
-        this.dato = dato;
+    public Nodo(String valor) {
+        this.valor = valor;
         this.siguiente = null;
     }
     
