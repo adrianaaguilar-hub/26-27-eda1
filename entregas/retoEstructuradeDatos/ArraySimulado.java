@@ -3,17 +3,17 @@ package entregas.retoEstructuradeDatos;
 public class ArraySimulado {
 
     private Nodo primero;
-    private int tamano;
+    private  final int TAMANO;
 
     private class Nodo {
         String valor;
         Nodo siguiente;
     }
 
-    public ArraySimulado(int tamano) {
-        this.tamano = tamano;
+    public ArraySimulado(int TAMANO) {
+        this.TAMANO = TAMANO;
         primero = null;
-        for (int i = 0; i < tamano; i++) {
+        for (int i = 0; i < TAMANO; i++) {
             Nodo nuevo = new Nodo();
             nuevo.siguiente = primero;
             primero = nuevo;
@@ -57,6 +57,6 @@ public class ArraySimulado {
     }
 
     private boolean indiceValido(int indice) {
-        return indice >= 0 && indice < tamano;
+        return indice >= 0 && indice < TAMANO;
     }
 }
