@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner entrada = new Scanner(System.in);
 
-        System.out.println("=== LISTA CON ALMA DE ARRAY ===");
+        System.out.println("=== ArraySimulado ===");
         System.out.print("¿De cuantos elementos quieres tu array? ");
         int tamaño = entrada.nextInt();
         ArraySimulado array = new ArraySimulado(tamaño);
