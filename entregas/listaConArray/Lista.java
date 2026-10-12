@@ -7,58 +7,58 @@ public class Lista {
 
     public Lista(int capacidad) {
         this.elementos = new String[capacidad];
-        this.contador = 0;
+        contador = 0;
     }
 
     public int tamaño() {
-        return this.contador;
+        return contador;
     }
 
     public boolean estaVacia() {
-        return this.contador == 0;
+        return contador == 0;
     }
 
     public void añadir(String elemento) {
-        if (this.contador < this.elementos.length) {
-            this.elementos[this.contador] = elemento;
-            this.contador++;
+        if (contador < elementos.length) {
+            elementos[contador] = elemento;
+            contador++;
         }
     }
 
     public void insertar(int posicion, String elemento) {
-        if (posicion >= 0 && posicion <= this.contador && this.contador < this.elementos.length) {
-            for (int i = this.contador; i > posicion; i--) {
-                this.elementos[i] = this.elementos[i - 1];
+        if (posicion >= 0 && posicion <= contador && contador < elementos.length) {
+            for (int i = contador; i > posicion; i--) {
+                elementos[i] = elementos[i - 1];
             }
-            this.elementos[posicion] = elemento;
-            this.contador++;
+            elementos[posicion] = elemento;
+            contador++;
         }
     }
 
     public String obtener(int posicion) {
         String elementoEncontrado = null;
-        if (posicion >= 0 && posicion < this.contador) {
-            elementoEncontrado = this.elementos[posicion];
+        if (posicion >= 0 && posicion < contador) {
+            elementoEncontrado = elementos[posicion];
         }
         return elementoEncontrado;
     }
 
     public String eliminar(int posicion) {
         String elementoEliminado = null;
-        if (posicion >= 0 && posicion < this.contador) {
-            elementoEliminado = this.elementos[posicion];
-            for (int i = posicion; i < this.contador - 1; i++) {
-                this.elementos[i] = this.elementos[i + 1];
+        if (posicion >= 0 && posicion < contador) {
+            elementoEliminado = elementos[posicion];
+            for (int i = posicion; i < contador - 1; i++) {
+                elementos[i] = elementos[i + 1];
             }
-            this.elementos[this.contador - 1] = null;
-            this.contador--;
+            elementos[contador - 1] = null;
+            contador--;
         }
         return elementoEliminado;
     }
 
     public void mostrar() {
-        for (int i = 0; i < this.contador; i++) {
-            System.out.println(this.elementos[i]);
+        for (int i = 0; i < contador; i++) {
+            System.out.println(elementos[i]);
         }
     }
 }
