@@ -1,4 +1,4 @@
-# Estructuras de datos de votación
+# Estructura de datos de votación
 
 ## Propuesta inicial (Array de votos + Array de candidatos)
 
