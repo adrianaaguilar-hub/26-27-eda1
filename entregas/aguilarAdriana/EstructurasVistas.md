@@ -11,7 +11,7 @@ cantidad de votos que ha obtenido.
 
 ## Array de objetos `Candidato`
 
-El array se inicializa con la cantidad de elementos = candidatos que exisran en la votación. Cada posición contiene un objeto `Candidato`.
+El array se inicializa con la cantidad de elementos = candidatos que existan en la votación. Cada posición contiene un objeto `Candidato`.
 
 ```java
 class Candidato {
