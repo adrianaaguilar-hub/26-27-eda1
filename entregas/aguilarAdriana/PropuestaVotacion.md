@@ -18,7 +18,7 @@ presentes. Se asume que el secretario puede ser también candidato, porque el
 enunciado no establece que deba quedar excluido.
 
 Cada alumno presente puede votar una sola vez y lo hace en papel. Una
-papeleta sin nombre es un voto en blanco; una papeleta con un nombre que no
+papeleta sin nombre es un voto en blanco, una papeleta con un nombre que no
 pertenece a las candidaturas fijadas es un voto nulo.
 
 ## Decisiones sobre los datos
